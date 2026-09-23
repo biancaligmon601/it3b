@@ -1,12 +1,4 @@
-<?php
-
-function redirect($path){
-
-    header("Location: " . BASE_URL . $path);
-
-    exit;
-
-}
+<?php 
 
 function loginUser($pdo,$login,$password){
     #QUERY 2
@@ -62,4 +54,5 @@ function requireRole($role)
         
     }
 }
+
 ?>
