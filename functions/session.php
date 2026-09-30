@@ -21,10 +21,57 @@ function startUserSession($pdo){
         ");
 
         $stmt->execute([
-            ':user_id' => $user_id
+            'user_id' => $user_id
 
         ]);
         
         return $pdo->lastInsertId();
 
 }
+
+    //  END USER SESSION
+
+    function endUserSession($pdo){
+        if(!isset($_SESSION['user_id'])){
+            return false;
+        }
+
+        $session_if = $_SESSION['session_id'];
+
+        $stmt = $pdo->prepare("
+        UPDATE user_sessions
+        SET
+            session_end = NOW(),
+            session_duration = TIMESTAMPDIFF(
+            SECOND,
+            session_start,
+            NOW()
+            )
+        WHERE session_id = :session_id
+     ");
+
+         return $stmt  ->execute([
+            'session_id'=> $session_id
+         ]);
+    }
+
+    //Check if user is already logged in
+    function hasActiveUserSession($pdo,$user_id){
+
+    $stmt= $pdo->prepare("
+        SELECT session_id
+        FROM user_sessions
+        WHERE user_id = :user_id
+        AND session_end IS NULL
+        LIMIT 1
+    ");
+
+    $stmt->execute([
+        'user_id' => $user_id
+    ]);
+
+    return (bool) $stmt->fetchColumn();
+    }
+
+
+?>

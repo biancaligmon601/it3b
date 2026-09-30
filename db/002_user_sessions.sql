@@ -1,7 +1,7 @@
 CREATE TABLE user_sessions(
     -- Session id to be used in dashboards and references
 
-    session_if INT AUTO_INCREMENT PRIMARY KEY,
+    session_id INT AUTO_INCREMENT PRIMARY KEY,
 
     -- USER ID reference
     user_id INT NOT NULL,
