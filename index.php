@@ -1,43 +1,51 @@
 <?php
 require_once 'config/config.php';
 
-
-if(isset($_SESSION['user_id'])) {
-    header('Location: ' . BASE_URL . '/app/' . $_SESSION['user_role'] . '/index.php');
-    exit();
+if(isset($_SESSION['user_id'])){
+    header('Location: ' .BASE_URL . '/app/' . $_SESSION['user_role'] . '/index.php');
+    exit;
 }
 
 $error='';
 
-if($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $login = $_POST['login'] ?? '';
+if($_SERVER['REQUEST_METHOD'] ==='POST'){
+    
+    $login = trim($_POST['login'] ?? '');
     $password = $_POST['password'] ?? '';
 
-    $error = 'Invalid login credentials. Please try again.';
+    
+    $error = 'Invalid login credentials';
 
-    if ($login=== '' || $password === '') {
+    if ($login==='' || $password ===''){
         // Log incomplete login attempt
         logActivity($pdo,null,$login,'login','failed');
 
     }else{
-        
-    $result = loginUser($pdo,$login,$password);
 
-         if(loginUser($pdo,$login,$password)){
-            logActivity($pdo,$_SESSION['user_id'],$_SESSION['user_email'],'login','success');
-            echo 'location: ' . BASE_URL . '/app/' . $_SESSION['user_role'] . '/index.php';
+        $result = loginUser($pdo,$login,$password);
+
+        if($result===true){
+        
+        // Log incomplete login attempt
+            logActivity($pdo,$_SESSION['user_id'],
+            $_SESSION['user_email'],
+            'login',
+            'success'
+        );
+            
+            echo 'Location: ' . BASE_URL . '/app/' . $_SESSION['user_role'] . '/index.php'; 
             header('Location: ' . BASE_URL . '/app/' . $_SESSION['user_role'] . '/index.php');
             exit;
 
-        }elseif($result=== 'active_session'){
+        }elseif($result==='active_session'){
             echo 'This account is already logged in on another device';
-
-            $error = 'This Account is already logged in on another device';
+            
+            $error = 'This account is already looged in on another device';
+        
         }else{
+            
             $error = 'Invalid login credentials';
         }
-
-        
     }
 }
 
@@ -52,24 +60,21 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 
-
 <form method="POST">
     <label>Username or Email</label>
-    <input  type="text" 
-            name="login" 
+    <input type="text"
+            name="login"
             required>
 
     <br>
     <br>
     <label>Password</label>
-    <input  type="password"
-            name="password" 
+    <input type="password"
+            name="password"
             required>
     <br>
-    <button type="submit">Login</button>
+    <button type="submit">Sign In</button>
 </form>
-
-    
     
 </body>
 </html>
